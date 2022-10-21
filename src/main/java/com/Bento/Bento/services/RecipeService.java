@@ -49,6 +49,22 @@ public class RecipeService {
 	    return recipeRepository.findById(id).get();
 	}
 
+
+
+	public Recipe getRecipe(String title) throws Exception {
+		// TODO Auto-generated method stub
+		  Optional<Recipe> recipe = recipeRepository.findByTitle(title);
+		  if(!recipe.isPresent()){
+			  throw new Exception("No Recipe Found");
+		  }
+	  return recipeRepository.findByTitle(title).get();
+	}
+
+	public Recipe getRecipeDetailsByTitle(String title) {
+		// TODO Auto-generated method stub
+	    return recipeRepository.findByTitle(title).get();
+	}
+	
 	public HashMap<String, List<ResponseRecipe>> searchIngredient(List<String> ingredients) {
 		// TODO Auto-generated method stub
 		Query query = new Query();
@@ -76,7 +92,6 @@ public class RecipeService {
 		}
 		recipeData.put("matchedRecipe", matchedResponseRecipe);
 		query = new Query();
-
 //			query.addCriteria(Criteria.where("ingredients").ne(ingredients));
 		List<Recipe> unMatchedRecipe = mongoTemplate.find(query,Recipe.class);
 		unMatchedRecipe.removeAll(matchedRecipe);
@@ -97,26 +112,9 @@ public class RecipeService {
 	  	    }).collect(Collectors.toList());
 		
 		recipeData.put("unMatchedRecipe", unMatchedResponseRecipe);
-
 		return recipeData;
-
 //	    return recipeRepository.findById(id).get();
-
 //		return null;
-	}
-
-	public Recipe getRecipe(String title) throws Exception {
-		// TODO Auto-generated method stub
-		  Optional<Recipe> recipe = recipeRepository.findByTitle(title);
-		  if(!recipe.isPresent()){
-			  throw new Exception("No Recipe Found");
-		  }
-	  return recipeRepository.findByTitle(title).get();
-	}
-
-	public Recipe getRecipeDetailsByTitle(String title) {
-		// TODO Auto-generated method stub
-	    return recipeRepository.findByTitle(title).get();
 	}
 
 }

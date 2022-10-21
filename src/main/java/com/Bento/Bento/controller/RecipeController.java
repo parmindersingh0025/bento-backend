@@ -119,5 +119,11 @@ public class RecipeController {
 	          fileDB.getIngredients(),
 	          fileDB.getSteps()));
 	  }
+	
+	@GetMapping("/search-by-ingredient")
+	  public ResponseEntity<HashMap<String, List<ResponseRecipe>>> searchByIngredient(@RequestParam(required = false) List<String> ingredients) {
+		HashMap<String, List<ResponseRecipe>> fileDB = recipeService.searchIngredient(ingredients);
+	    return ResponseEntity.status(HttpStatus.OK).body(fileDB);
+	  }
 
 }
