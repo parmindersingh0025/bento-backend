@@ -61,13 +61,13 @@ public class IngredientController {
         .body(fileDB.getData());
   }
   
-  @GetMapping("/select-search")
-  public ResponseEntity<List<ResponseFile>> selectedSearchIngredient(@RequestParam(required = false) List<String> ingredient) {
-    List<Ingredients> fileDB = ingredientService.searchIngredient(ingredient);
+  @GetMapping("/search")
+  public ResponseEntity<List<ResponseFile>> searchIngredient(@RequestParam(required = false) String item) {
+    List<Ingredients> fileDB = ingredientService.searchIngredientWithTitle(item);
     List<ResponseFile> files = fileDB.stream().map(dbFile -> {
         String fileDownloadUri = ServletUriComponentsBuilder
                 .fromCurrentContextPath()
-                .path("/files/")
+                .path("/ingredient/getbyid/")
                 .path(dbFile.getId())
                 .toUriString();
 
@@ -82,24 +82,35 @@ public class IngredientController {
     return ResponseEntity.status(HttpStatus.OK).body(files);
   }
   
-  @GetMapping("/search")
-  public ResponseEntity<List<ResponseFile>> searchIngredient(@RequestParam(required = false) String item) {
-    List<Ingredients> fileDB = ingredientService.searchIngredientWithTitle(item);
-    List<ResponseFile> files = fileDB.stream().map(dbFile -> {
-        String fileDownloadUri = ServletUriComponentsBuilder
-                .fromCurrentContextPath()
-                .path("/files/")
-                .path(dbFile.getId())
-                .toUriString();
+  @GetMapping("/get/{title}")
+  public ResponseEntity<byte[]> getIngredientByName(@PathVariable String title) {
+    Ingredients fileDB;
+	try {
+		fileDB = ingredientService.getIngredient(title);
+		return ResponseEntity.ok()
+		        .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + fileDB.getName() + "\"")
+		        .body(fileDB.getData());
+	} catch (Exception e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	}
+	return ResponseEntity.notFound().build();
+  }
+  
+  @PostMapping("/add")
+  public ResponseEntity<ResponseMessage> addIngredients(@RequestParam("title") String title, @RequestParam("image") MultipartFile file) {
+    String message = "";
+    try {
+    	ingredientService.addIngredients(title,file);
+      message = "Uploaded the file successfully: " + file.getOriginalFilename();
+      return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(message));
+    } catch (Exception e) {
+        message = "Could not upload the file: " + file.getOriginalFilename() + "!";
 
-            return new ResponseFile(
-          	  dbFile.getId(),
-          	  dbFile.getTitle(),
-                dbFile.getName(),
-                fileDownloadUri,
-                dbFile.getType(),
-                dbFile.getData().length);
-          }).collect(Collectors.toList());
-    return ResponseEntity.status(HttpStatus.OK).body(files);
+    	if (e instanceof org.springframework.dao.DuplicateKeyException) {
+			message = "Could not upload the file: " + "Ingredient Already Present in the list";
+		}
+      return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body(new ResponseMessage(message));
+    }
   }
 }

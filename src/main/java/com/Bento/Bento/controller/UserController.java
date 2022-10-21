@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.Bento.Bento.models.Kid;
 import com.Bento.Bento.models.Response;
 import com.Bento.Bento.models.UserModel;
 import com.Bento.Bento.repository.UserRepository;
@@ -74,6 +73,32 @@ public class UserController {
 		}
 		
 		return ResponseEntity.ok(new Response("Kids Added"));
+	}
+	
+	@PostMapping("/signup/{role}/{type}")
+	private ResponseEntity<?> userCreation(@PathVariable String role,@PathVariable String type,@RequestBody UserModel userModel){
+		try {
+			if(StringUtils.isEmpty(userModel.getUserName()) && StringUtils.isEmpty(userModel.getName()))
+//				throw new BadCredentialsException("UserName and Name cannot be Empty");
+		        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("UserName and Name cannot be Empty");
+			if (!type.equalsIgnoreCase("social") && StringUtils.isEmpty(userModel.getPassword()))
+//				throw new BadCredentialsException("Password cannot be Empty");
+		        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new String("Password cannot be Empty"));
+			if(role.equalsIgnoreCase("Kid"))
+				userModel.setRoles("ROLE_KID");
+			else
+				userModel.setRoles("ROLE_KID,ROLE_PARENT");
+			userModel.setType(type);
+			userModel.setActive(true);
+			
+			userModel = userService.signup(userModel);
+		} catch (Exception e) {
+			if(e.getLocalizedMessage().contains("userName dup key"))
+		        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("UserName Already Exists "+userModel.getUserName());
+	        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error during Signup");
+		}
+		
+		return ResponseEntity.ok(new Response(userModel.getId().toString()));
 	}
 	
 	@GetMapping("/kid")

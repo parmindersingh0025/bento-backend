@@ -14,7 +14,11 @@ public class UserModel {
 	@Id
 	private ObjectId id;
 	
+	private String type;
+	
 	private String userName;
+	
+	private String name;
 	
 	private String password;
 

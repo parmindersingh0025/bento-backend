@@ -9,7 +9,6 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import com.Bento.Bento.models.MyUserDetails;
-import com.Bento.Bento.models.User;
 import com.Bento.Bento.models.UserModel;
 import com.Bento.Bento.repository.UserRepository;
 

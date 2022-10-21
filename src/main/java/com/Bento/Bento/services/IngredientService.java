@@ -24,7 +24,7 @@ public class IngredientService {
   private IngredientsRepository ingredientsRepository;
   
   @Autowired
-	private MongoTemplate mongoTemplate;
+  private MongoTemplate mongoTemplate;
 
     public Ingredients getIngredientById(String id) {
 	    return ingredientsRepository.findById(id).get();
@@ -59,4 +59,19 @@ public List<Ingredients> searchIngredientWithTitle(String item) {
 
 	return result;
 }
+
+public Ingredients addIngredients(String title, MultipartFile file) throws IOException {
+    String fileName = StringUtils.cleanPath(file.getOriginalFilename());
+    Ingredients ingredients = new Ingredients(title,fileName, file.getContentType(), file.getBytes());
+    return ingredientsRepository.save(ingredients);
+  }
+
+public Ingredients getIngredient(String title) throws Exception {
+	  Optional<Ingredients> ingredients = ingredientsRepository.findByTitle(title);
+	  if(!ingredients.isPresent()){
+		  throw new Exception("No Ingredients Found");
+	  }
+  return ingredientsRepository.findByTitle(title).get();
+}
+
 }
