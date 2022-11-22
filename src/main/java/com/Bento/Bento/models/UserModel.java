@@ -1,8 +1,11 @@
 package com.Bento.Bento.models;
 
 
+import javax.persistence.Lob;
+
 import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import lombok.Data;
@@ -16,11 +19,15 @@ public class UserModel {
 	
 	private String type;
 	
+	@Indexed(unique = true)
 	private String userName;
 	
 	private String name;
 	
 	private String password;
+	
+	@Lob
+	private byte[] data;
 
 	public UserModel() {
 	}

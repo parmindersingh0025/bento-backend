@@ -11,6 +11,6 @@ import com.Bento.Bento.models.UserModel;
 @Repository
 public interface KidRepository extends MongoRepository<Kid, String> {
 
-	Kid findByParentId(String parentId);
+	Optional<Kid> findByParentId(String parentId);
 	
 }

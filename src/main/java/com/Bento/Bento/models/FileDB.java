@@ -1,19 +1,20 @@
 package com.Bento.Bento.models;
-//import javax.persistence.Id;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
 import javax.persistence.Lob;
+import javax.persistence.Table;
 
-import org.springframework.data.mongodb.core.index.Indexed;
+import org.hibernate.annotations.GenericGenerator;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 //@Entity
 //@Table(name = "files")
 @Document
-public class Ingredients {
-	
-//  @Id
+public class FileDB {
+  @org.springframework.data.annotation.Id
 //  @GeneratedValue(generator = "uuid")
 //  @GenericGenerator(name = "uuid", strategy = "uuid2")
-	@org.springframework.data.annotation.Id
   private String id;
 
   private String name;
@@ -22,19 +23,14 @@ public class Ingredients {
 
   @Lob
   private byte[] data;
-  
-  @Indexed(unique = true)
-  private String title;
 
-
-  public Ingredients() {
+  public FileDB() {
   }
 
-  public Ingredients(String title, String name, String type, byte[] data) {
+  public FileDB(String name, String type, byte[] data) {
     this.name = name;
     this.type = type;
     this.data = data;
-    this.title = title;
   }
 
   public String getId() {
@@ -64,13 +60,5 @@ public class Ingredients {
   public void setData(byte[] data) {
     this.data = data;
   }
-
-public String getTitle() {
-	return title;
-}
-
-public void setTitle(String title) {
-	this.title = title;
-}
 
 }

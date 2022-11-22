@@ -71,9 +71,9 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 		 * .antMatchers("/user").hasAnyRole("USER","ADMIN")
 		 * .antMatchers("/").permitAll() .and().formLogin();
 		 */
-		http.csrf().disable().authorizeRequests().antMatchers("/authenticate","/subs","/auth").permitAll()
+		http.csrf().disable().authorizeRequests().antMatchers("/authenticate","/subs","/auth","/swagger-ui.html").permitAll()
 		.antMatchers("/admin").hasRole("ADMIN").antMatchers("/user").hasRole("USER").anyRequest()
-				.authenticated().and().
+				.permitAll().and().
 				exceptionHandling().and().sessionManagement()
 		.sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 		http.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);;
